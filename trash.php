@@ -1,3 +1,36 @@
+
+gettingTogether($model_row );
+function gettingTogether(Array $array){
+    $result = [];
+    if(!is_array($array)){
+        return false;
+    }
+
+    foreach($array as $key => $value){
+        if(is_array($value)){
+            $result = array_merge($result, gettingTogether($value));
+        }
+        else{
+            $result[] = $value;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 foreach ($array['results'] as $element) {
  
  if (isset($last_id_year[$element['Model']]) && isset($last_id_new[$element['Make']]) ) {

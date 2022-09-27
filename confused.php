@@ -220,7 +220,7 @@ foreach ($out as $key=>$course) {
     // $bitwin = array();
 
 
-    $pirate_id = $course[$i]['Model'];
+    $pirate_id = $names;
     if (!in_array($pirate_id, $bit_arr)) {
     foreach($model_names as $names){
         $bit_arr[] = $pirate_id;
@@ -259,15 +259,12 @@ foreach ($year_row as $item)
 
    
     unset($model_row);
-    unset($commaSeparated_model);
-    unset($commaSeparated_year);
-    unset($year_row);
  $i++;
 }
 
-// echo '<pre>';
-// print_r($querynew);
-// exit;
+echo '<pre>';
+print_r($querynew);
+exit;
 
 
 
