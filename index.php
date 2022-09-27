@@ -24,8 +24,11 @@
 $already_done = array();
 $modle_already = array();
 $year_already = array();
+$contain1 = array();
+$contain2 = array();
 $conn = new mysqli("localhost", "root", "", "test"); //Connect PHP to MySQL Database
 $query = '';
+$querynew = '';
 $table_data = '';
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -96,7 +99,9 @@ if ($result->num_rows > 0) {
 
         }
 
-   
+// echo '<pre>';
+// print_r($last_id);
+// exit;
      
     
 }
@@ -167,21 +172,73 @@ if ($result->num_rows > 0) {
 // print_r($last_id_year);
 // exit;
 
-foreach ($array['results'] as $element) {
-    if (isset($last_id_new) && isset($last_id) ) {
 
-    $model_id = implode(" , ",$last_id_new[$element['Make']]);
-    $year_id = implode(" , ",$last_id_year[$element['Model']]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // echo '<pre>';
-// print_r($names_str);
+// print_r($out);
 // exit;
-    $querytwo = "INSERT  INTO ymm(make_id, model_id, year_id, created_at)  VALUES ('" . $last_id[$element['Make']] . "', '".$model_id."', '".$year_id."' ,'" . date("Y/m/d") . "'); "; // Make Multiple Insert Query
-    $result = $conn->query($querytwo);
+
+foreach ($out as $key=>$course) {
+    // echo '<pre>';
+    // print_r($course[0]['Model']);
+    // exit;
+    for ($i = 0;$i < sizeof($course);$i++) {
+        $unique_model_id = $key;
+        $unique_year_id = $course[$i]['Model'];
+        if (!in_array($unique_model_id, $contain1)) {
+            $contain1[] = $unique_model_id;
+            $model_id = implode(" , ",$last_id_new[$unique_model_id]);
+
+            if (!in_array($unique_year_id, $contain2)) {
+                $contain2[] = $unique_year_id;
+              
+                $year_id = implode(" , ",$last_id_year[$unique_year_id]);
+
+                $querynew .= "INSERT  INTO ymm(make_id, model_id, year_id, created_at)  VALUES ('" . $unique_model_id . "', ('".$model_id."'), ('".$year_id."') ,'" . date("Y/m/d") . "'); "; // Make Multiple Insert Query
+
+                }
+        }
+    
+
     }
 }
 
 
 
+
+
+
+
+
+
+
+
+$connect = mysqli_connect("localhost", "root", "", "test"); 
+if(mysqli_multi_query($connect, $querynew)) {
+    echo 'success';
+}
 
 
 

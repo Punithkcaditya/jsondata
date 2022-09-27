@@ -1,3 +1,26 @@
+foreach ($array['results'] as $element) {
+ 
+ if (isset($last_id_year[$element['Model']]) && isset($last_id_new[$element['Make']]) ) {
+
+ $model_id = implode(" , ",$last_id_new[$element['Make']]);
+ $year_id = implode(" , ",$last_id_year[$element['Model']]);
+
+$querynew .= "INSERT  INTO ymm(make_id, model_id, year_id, created_at)  VALUES ('" . $last_id[$element['Make']] . "', ('".$model_id."'), ('".$year_id."') ,'" . date("Y/m/d") . "'); "; // Make Multiple Insert Query
+
+ }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 echo '<pre>';
