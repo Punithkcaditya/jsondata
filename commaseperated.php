@@ -27,7 +27,6 @@ $bit_arr = array();
 $bitwin = array();
 $contain1 = array();
 $contain2 = array();
-$unique_make = array();
 $conn = new mysqli("localhost", "root", "", "test"); //Connect PHP to MySQL Database
 $query = '';
 $querynew = '';
@@ -194,39 +193,94 @@ if ($result->num_rows > 0) {
 
 
 
+
+
+
+
 // echo '<pre>';
 // print_r($out);
 // exit;
 
-
+$i=0;
 foreach ($out as $key=>$course) {
-   
+    
     $sqlm = "SELECT id FROM make where make_name = '" . $key . "'";
-    $result = mysqli_query($conn, $sqlm);
-    $make_id = mysqli_fetch_assoc($result);
-    foreach($course as $main=>$value ){
-        $sql = "SELECT id FROM model where model_name = '".$value['Model']."'";
-        $result1 = $conn->query($sql);
-        $model_id = $result1->fetch_assoc();
-        $sqltwo = "SELECT id FROM year where year = '".$value['Year']."'";
-        $result2 = $conn->query($sqltwo);
-        $year_id = $result2->fetch_assoc();
-        // echo '<pre>';
-        // print_r($year_id['id']);
-        // exit;
-        $querynew .= "INSERT  INTO ymm(make_id, model_id, year_id, created_at)  VALUES ('" . $make_id['id'] . "', '".$model_id['id']."', '".$year_id['id']."' ,'" . date("Y/m/d") . "'); "; // Make Multiple Insert Query
+        $result = mysqli_query($conn, $sqlm);
+        $make_row = mysqli_fetch_assoc($result);
 
+// echo '<pre>';
+// print_r($course[$i]['Model']);
+// exit;
+
+    $last_names = array_column($course, 'Model');
+    $years = array_column($course, 'Year');
+    $model_names = array_unique($last_names);
+    $model_years = array_unique($years);
+    // $bit_arr = array();
+    // $bitwin = array();
+
+
+    $pirate_id = $course[$i]['Model'];
+    if (!in_array($pirate_id, $bit_arr)) {
+    foreach($model_names as $names){
+        $bit_arr[] = $pirate_id;
+        $sql = "SELECT id FROM model where model_name = '" . $names . "'";
+        $result = mysqli_query($conn, $sql);
+        $model_row[] = mysqli_fetch_assoc($result);
     }
 }
 
 
+
+    foreach($model_years as $years){
+        $sql = "SELECT id FROM  year where  year = '" . $years . "'";
+        $result = mysqli_query($conn, $sql);
+        $year_row[] = mysqli_fetch_assoc($result);
+    }
+
+    //$string = serialize( $model_row );
+    //$model_row_value = implode(" , ",$model_row);
+    foreach ($model_row as $item)
+{
+     $commaSeparated_model[] =  $item['id'];
+}
+
+foreach ($year_row as $item)
+{
+     $commaSeparated_year[] =  $item['id'];
+}
+
+
+
+    $string_product_model = implode(',', $commaSeparated_model);
+    $string_product_year = implode(',', $commaSeparated_year);
+
+    $querynew .= "INSERT  INTO ymm(make_id, model_id, year_id, created_at)  VALUES ('" . $make_row['id'] . "', ('".$string_product_model."'), ('".$string_product_year."') ,'" . date("Y/m/d") . "'); "; // Make Multiple Insert Query
+
+   
+    unset($model_row);
+    unset($commaSeparated_model);
+    unset($commaSeparated_year);
+    unset($year_row);
+ $i++;
+}
+
 // echo '<pre>';
 // print_r($querynew);
 // exit;
+
+
+
+
+
+
+
+
 $connect = mysqli_connect("localhost", "root", "", "test"); 
 if(mysqli_multi_query($connect, $querynew)) {
     echo 'success';
 }
+
 
 
 ?>
